@@ -365,6 +365,17 @@ class UserManager():
 
             try:
                 body = await request.read()
+                
+                # Check if this is a JSON file and format it
+                if path.lower().endswith('.json'):
+                    try:
+                        # Try to parse and reformat JSON
+                        json_data = json.loads(body.decode('utf-8'))
+                        formatted_json = json.dumps(json_data, indent=4, ensure_ascii=False)
+                        body = formatted_json.encode('utf-8')
+                    except (json.JSONDecodeError, UnicodeDecodeError):
+                        # If JSON parsing fails, save as-is
+                        pass
 
                 with open(path, "wb") as f:
                     f.write(body)
